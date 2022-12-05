@@ -1,7 +1,10 @@
 package com.example.kotlinprojecttest2
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
+import android.text.Layout
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     // This will be connected with fragListTitles || platformName - Vk (test platform)
     val viewer = ResponseViewer("vk")
     private val dbManager = MemworDatabaseManager()
+
 //=======
     var dialog: Dialog? = null
     var btnAboutUs: Button? = null
@@ -44,9 +48,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+
+
         super.onCreate(savedInstanceState)
 
-        dataBaseCheck()
+
+        //dataBaseCheck()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -115,9 +122,9 @@ class MainActivity : AppCompatActivity() {
     fun dataBaseCheck(){
         //dbManager.dataBaseInit()
         //dbManager.addNewCommunity("vk", "test-domain", "test-name", "test-category")
-        viewer.returnUrls()
-
-        resp = viewer.getVKList()
+//        viewer.returnUrls()
+//
+//        resp = viewer.getVKList()
 
         //domainsList = dbManager.getDomains()
     }
