@@ -1,19 +1,6 @@
 package com.example.kotlinprojecttest2
 
-import android.util.Log
-import com.example.kotlinprojecttest2.data.remote.quest.GetVKJsonResponse
-import com.example.kotlinprojecttest2.data.remote.quest.QuestApi
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 
-//import com.nopalyer.newsapp.Model.Articles
-/*
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -24,42 +11,93 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import org.ocpsoft.prettytime.PrettyTime
-import java.text.ParseException
-import java.text.SimpleDateFormat
+import kotlinx.android.synthetic.main.items.view.*
 import java.util.*
 
 
-class Adapter(var context: Context, arraylist: vkParse) :
+class Adapter(var context_: Context, arraylist: MutableList<MutableList<String>> = ArrayList()) :
     RecyclerView.Adapter<Adapter.ViewHolder>() {
 
+    var context: Context? = null
     var arraylist: MutableList<MutableList<String>> = ArrayList()
 
     init {
-        this.arraylist = arraylist.getList()
+        this.context = context_
+        this.arraylist = arraylist
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.items, parent, false)
+        val view: View = LayoutInflater.from(parent.context).inflate(com.example.kotlinprojecttest2.R.layout.items, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val imageUrl: String  = this.arraylist[position + 1]
-        val url: String = a.getUrl()
+        val imageUrl: String  = this.arraylist[position][1]
+        val url: String = this.arraylist[position][0]
         Picasso.with(context).load(imageUrl).into(holder.imageView)
-        holder.Title.setText("Мемы лицея 1523")
-        holder.author.setText(imageUrl)
-        holder.tvDate.setText("\u2022" + dateTime(a.getPublishedAt()))
+        holder.itemView.category.text = "Школьный медиаконтент"
+        holder.itemView.author.text = "Мемы лицея 1523"
+        holder.itemView.meme_text.text = this.arraylist[position][1]
+        holder.category.text = "Школьный медиаконтент"
+        holder.author.text = "Мемы лицея 1523"
+        holder.meme_text.text = this.arraylist[position][1]
         holder.cardView.setOnClickListener {
             val intent = Intent(context, Detailed::class.java)
-            intent.putExtra("title", "Мемы лицея 1523")
-            intent.putExtra("source", a.getSource().getName())
-            intent.putExtra("time", dateTime(a.getPublishedAt()))
-            intent.putExtra("desc", a.getDescription())
-            intent.putExtra("imageUrl", a.getUrlToImage())
-            intent.putExtra("url", a.getUrl())
-            context.startActivity(intent)
+            intent.putExtra("category", "Мемы лицея 1523")
+            intent.putExtra("author", "Мемы лицея 1523")
+            intent.putExtra("desc", this.arraylist[position][0])
+            intent.putExtra("imageUrl", this.arraylist[position][1])
+            intent.putExtra("url", this.arraylist[position][0])
+            context?.startActivity(intent)
+        }
+
+
+    }
+    /*
+        override fun getItemCount(): Int {
+            return arraylist.size
+        }
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+        .execute("http://java.sogeti.nl/JavaBlog/wp-content/uploads/2009/04/android_icon_256.png");
+        public void onClick(View v) {
+            startActivity(new Intent(this, IndexActivity.class));
+            finish();
+        }
+
+
+        inner class DownloadImageTask(var bmImage: ImageView) :
+            AsyncTask<String?, Void?, Bitmap?>() {
+            override fun doInBackground(vararg params: String?): Bitmap? {
+                val urldisplay = urls[0]
+                var mIcon11: Bitmap? = null
+                try {
+                    val `in`: InputStream = URL(urldisplay).openStream()
+                    mIcon11 = BitmapFactory.decodeStream(`in`)
+                } catch (e: Exception) {
+                    e.message?.let { Log.e("Error", it) }
+                    e.printStackTrace()
+                }
+                return mIcon11
+            }
+
+            override fun onPostExecute(result: Bitmap?) {
+                bmImage.setImageBitmap(result)
+            }
+        }
+
+     */
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var category: TextView
+        var author: TextView
+        var meme_text: TextView
+        var imageView: ImageView
+        var cardView: CardView
+
+        init {
+            category = itemView.findViewById(com.example.kotlinprojecttest2.R.id.category)
+            author = itemView.findViewById(com.example.kotlinprojecttest2.R.id.author)
+            meme_text = itemView.findViewById(com.example.kotlinprojecttest2.R.id.meme_text)
+            imageView = itemView.findViewById(com.example.kotlinprojecttest2.R.id.image)
+            cardView = itemView.findViewById(com.example.kotlinprojecttest2.R.id.cardView)
         }
     }
 
@@ -67,28 +105,13 @@ class Adapter(var context: Context, arraylist: vkParse) :
         return arraylist.size
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var Title: TextView
-        var author: TextView
-        var meme_text: TextView
-        var imageView: ImageView
-        var cardView: CardView
-
-        init {
-            Title = itemView.findViewById(R.id.category)
-            author = itemView.findViewById(R.id.author)
-            meme_text = itemView.findViewById(R.id.meme_text)
-            imageView = itemView.findViewById(R.id.image)
-            cardView = itemView.findViewById(R.id.cardView)
-        }
-    }
-
+/*
     fun dateTime(t: String?): String? {
         val prettyTime = PrettyTime(Locale(country))
         var time: String? = null
         try {
             val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:", Locale.ENGLISH)
-            val date = simpleDateFormat.parse(t)
+            val date = t?.let { simpleDateFormat.parse(it) }
             time = prettyTime.format(date)
         } catch (e: ParseException) {
             e.printStackTrace()
@@ -104,6 +127,6 @@ class Adapter(var context: Context, arraylist: vkParse) :
         }
 
 
-}
-
  */
+
+}

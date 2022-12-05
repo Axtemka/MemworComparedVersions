@@ -1,22 +1,32 @@
 package com.example.kotlinprojecttest2
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+//<<<<<<< HEAD
 import android.widget.Toast
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.kotlinprojecttest2.databinding.ActivityMainBinding
 import com.example.kotlinprojecttest2.db.MemworDatabaseManager
+//=======
+import android.widget.Button
+//>>>>>>> refs/remotes/origin/compared
 import com.google.android.material.tabs.TabLayoutMediator
 
 
 class MainActivity : AppCompatActivity() {
-
+    public var domainsList: MutableList<String?> = ArrayList()
+    var resp: MutableList<MutableList<String>> = ArrayList()
     // This will be connected with fragListTitles || platformName - Vk (test platform)
-    private val viewer = ResponseViewer("vk")
+    val viewer = ResponseViewer("vk")
     private val dbManager = MemworDatabaseManager()
+//=======
+    var dialog: Dialog? = null
+    var btnAboutUs: Button? = null
+//>>>>>>> refs/remotes/origin/compared
 
     private val fragList = listOf(
         Vk.newInstance(),
@@ -33,9 +43,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
+        dataBaseCheck()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        btnAboutUs = findViewById<Button>(R.id.aboutUs)
+//>>>>>>> refs/remotes/origin/compared
         val adapter = VpAdapter(this, fragList)
         binding.vp2.adapter = adapter
         TabLayoutMediator(binding.ourtablayout, binding.vp2){
@@ -43,6 +59,10 @@ class MainActivity : AppCompatActivity() {
         }.attach()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
+
+        dialog = Dialog(this)
+        btnAboutUs!!.setOnClickListener { showDialog() }
+//>>>>>>> refs/remotes/origin/compared
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -79,8 +99,29 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         //TODO(Different platform`s parsing from platform names (Reddit, Telegram))
         //viewer.returnUrls()
-        dbManager.databaseInit()
-        dbManager.addNewCommunity("vk", "test-domain", "test-name", "test-category")
+
+
     }
+    fun showDialog() {
+        val btnClose: Button
+        dialog?.setContentView(R.layout.about_us_pop_up)
+        dialog!!.show()
+        btnClose = dialog!!.findViewById(R.id.close_)
+        btnClose.setOnClickListener { dialog!!.dismiss() }
+//>>>>>>> refs/remotes/origin/compared
+    }
+
+
+    fun dataBaseCheck(){
+        //dbManager.dataBaseInit()
+        //dbManager.addNewCommunity("vk", "test-domain", "test-name", "test-category")
+        viewer.returnUrls()
+
+        resp = viewer.getVKList()
+
+        //domainsList = dbManager.getDomains()
+    }
+
 }
+
 

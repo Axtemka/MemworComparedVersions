@@ -11,15 +11,17 @@ class RetrofitModule {
     fun httpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply{
         this.level = HttpLoggingInterceptor.Level.BODY
     }
-    fun httpClient(): OkHttpClient =
+
+    fun httpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
         OkHttpClient.Builder()
-            .addInterceptor(httpLoggingInterceptor())
+            .addInterceptor(httpLoggingInterceptor)
             .build()
 
-    fun vkRetrofit(): Retrofit =
+    fun vkRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .baseUrl("https://api.vk.com/method/")
-            .client(httpClient())
+            .client(okHttpClient)
+//>>>>>>> refs/remotes/origin/compared
             .addConverterFactory(GsonConverterFactory.create())
             //.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()

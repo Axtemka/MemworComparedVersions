@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.kotlinprojecttest2.data.remote.quest.GetVKJsonResponse
 import com.example.kotlinprojecttest2.data.remote.quest.QuestApi
+import com.example.kotlinprojecttest2.utils.Constants
+
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -14,13 +16,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class ResponseViewer (private val platformName:String): ViewModel(){
     //val RetrofitClient = RetrofitModule()
-    private val vkResList: MutableList<MutableList<String>> = ArrayList()
+    //TODO(IMPORT DOMAINS LIST FROM ACTIVITY)
+
+    //var domainsList: MutableList<String?> = ArrayList()
+    val constants = Constants()
+    val vkResList: MutableList<MutableList<String>> = ArrayList()
     lateinit var questApi: QuestApi
 
     fun returnUrls() {
-        if (platformName == "vk") {
-            vkConfigureRetrofit()
-        }
+        vkConfigureRetrofit()
     }
 
     private fun vkConfigureRetrofit() {
@@ -42,14 +46,25 @@ class ResponseViewer (private val platformName:String): ViewModel(){
         questApi = retrofit.create(QuestApi::class.java)
 
 //        questApi = RetrofitClient.vkRetrofit().create(QuestApi::class.java)
-        questApi.getVkJson(domain = "dank_memes_ayylmao", access_token = "9fb466189fb466189fb46618449ca5442599fb49fb46618fce51db6b049cb80918bb78e", count = 100, ver = "5.131")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                vkFindUrls(it)
-            }, {
-                //println(it.stackTrace.toString())
-            })
+        //TODO("ADD DOMAINS LIST")
+        //domainsList.forEach { it ->
+                questApi.getVkJson(domain = "memzavod1523l", access_token = constants.ACCESS_TOKEN, count = 100, ver = constants.API_VERSION)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        vkFindUrls(it)
+                    }, {
+                        //println(it.stackTrace.toString())
+                    })
+        //}
+//        questApi.getVkJson(domain = "dank_memes_ayylmao", access_token = constants.ACCESS_TOKEN, count = 100, ver = constants.API_VERSION)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({
+//                vkFindUrls(it)
+//            }, {
+//                //println(it.stackTrace.toString())
+//            })
     }
 
     private fun redditConfigureRetrofit() {
@@ -135,7 +150,7 @@ class ResponseViewer (private val platformName:String): ViewModel(){
             }
         }
         // debug output (comment if not necessary)
-        Log.e("TAAAAG", vkResList.toString())
+
     }
 
     //TODO(Replace string with reddit data class response)
@@ -210,6 +225,22 @@ class ResponseViewer (private val platformName:String): ViewModel(){
     }
 
     fun getVKList(): MutableList<MutableList<String>> {
-        return vkResList
+        val vkResList_: MutableList<MutableList<String>> = ArrayList()
+        val numbers: IntArray = intArrayOf(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+        for(i in 0..10) {
+            var flag: Boolean = true
+            var rnds = (0..this.vkResList.size).random()
+            while (flag){
+                for(j in 0..9) {
+                    if (rnds == numbers[j]){
+                        rnds = (0..this.vkResList.size).random()
+                        break
+                    }
+                }
+                flag = false
+            }
+            vkResList_.add(vkResList[rnds])
+        }
+        return vkResList_
     }
 }

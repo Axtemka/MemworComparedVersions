@@ -6,7 +6,8 @@
     android:layout_height="match_parent">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+
+        android:layout_height="275dp"
         android:layout_margin="10dp"
         app:cardElevation="4dp"
         app:cardCornerRadius="40dp"
@@ -52,21 +53,39 @@
                     android:textColor="@color/white_01"
                     android:id="@+id/author"/>
 
+<!--<<<<<<< HEAD-->
+<!--            </LinearLayout>-->
+
+<!--        </FrameLayout>-->
+
+<!--    </androidx.cardview.widget.CardView>-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/meme_text"-->
+<!--        android:layout_width="391dp"-->
+<!--        android:layout_height="66dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:background="@drawable/blue_background"-->
+<!--        android:fontFamily="@font/g_light"-->
+<!--        android:padding="10dp"-->
+<!--        android:text="There is no text for this post"-->
+<!--        android:textColor="@color/white_01"-->
+<!--        />-->
+<!--=======-->
+
             </LinearLayout>
 
         </FrameLayout>
-
+        <TextView
+            android:id="@+id/meme_text"
+            android:layout_width="391dp"
+            android:layout_height="66dp"
+            android:layout_gravity="center"
+            android:background="@drawable/blue_background"
+            android:fontFamily="@font/g_light"
+            android:padding="10dp"
+            android:text="There is no text for this post"
+            android:textColor="@color/white_01"
+            android:layout_marginTop="95dp"/>
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/meme_text"
-        android:layout_width="391dp"
-        android:layout_height="66dp"
-        android:layout_gravity="center"
-        android:background="@drawable/blue_background"
-        android:fontFamily="@font/g_light"
-        android:padding="10dp"
-        android:text="There is no text for this post"
-        android:textColor="@color/white_01"
-        />
 </LinearLayout>
