@@ -1,17 +1,32 @@
 package com.example.kotlinprojecttest2.db
 
+import android.os.Handler
 import android.util.Log
+import androidx.core.os.HandlerCompat.postDelayed
+import com.example.kotlinprojecttest2.Domain
+import com.example.kotlinprojecttest2.DomainsLiveData
+import com.example.kotlinprojecttest2.MainActivity
+import com.example.kotlinprojecttest2.MemworViewModel
+import com.example.kotlinprojecttest2.utils.Constants
+import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.database.*
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class MemworDatabaseManager {
-    private lateinit var db: DatabaseReference
-    private val listData: MutableList<String?> = ArrayList()
 
-    val COMMUNITY_KEY: String = "Community"
+    private var db: DatabaseReference
+    private var const: Constants = Constants()
+    private val COMMUNITY_KEY: String = "Community"
 
-    fun dataBaseInit(){
+    init{
         db = FirebaseDatabase.getInstance().getReference(COMMUNITY_KEY)
     }
+
+//    fun getVklist() = runBlocking{
+//        getVkDomains()
+//    }
+
 
     fun addNewCommunity(platform: String, domain: String, name: String, category: String){
         val id = db.key.toString()
@@ -19,27 +34,42 @@ class MemworDatabaseManager {
         db.push().setValue(newCommunity)
     }
 
-    fun getDomains(): MutableList<String?> {
-        db.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot){
-
-                if (listData.size > 0) listData.clear()
-
-                for (ds: DataSnapshot in dataSnapshot.children){
-                    val community = ds?.getValue(Community::class.java)
-
-                    if (community != null) {
-                        listData?.add(community.domain)
+    fun getVkDomains() {
+        val coroutineScope = CoroutineScope(Dispatchers.IO)
+        coroutineScope.launch{
+            db.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    var _vkData: MutableList<Domain> = ArrayList()
+                    //if (vkData.size > 0) vkData.clear()
+                    for (ds : DataSnapshot in dataSnapshot.getChildren()){
+                        val community: Community? = ds.getValue(Community::class.java)
+                        val domain = Domain()
+                        if (community != null) {
+                            community.category?.let { domain.category = it }
+                            community.domain?.let { domain.domain = it }
+                            community.name?.let { domain.name = it }
+                            community.platform?.let { domain.platform = it }
+                        }
+                        if(!domain.name.isNullOrEmpty() || !domain.domain.isNullOrEmpty() || !domain.category.isNullOrEmpty() || !domain.platform.isNullOrEmpty() ){
+                            _vkData.add(domain)
+                        }
                     }
+                    //Log.e("WITH LOVE FROM DB", _vkData.toString())
+                    MemworViewModel.vkDomainsLiveData.setValueToVkDomains(_vkData)
                 }
+                //Log.e("SUCCESS DATABASE TAG", _vkData.toString())
+                override fun onCancelled(error: DatabaseError) {
+                    // Failed to read value
+                    Log.w("DATABASE ERROR TAG", "Failed to read value.", error.toException())
+                }
+            })
+        }
 
-                Log.e("SUCCESS DATABASE TAG", listData.toString())
-            }
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("DATABASE ERROR TAG", "Failed to read value.", error.toException())
-            }
-        })
-        return listData
+        //result.join()
+        //Log.e("SUCCEED res DB", res.toString())
+        //Log.e("SUCCEED vkData DB", vkData.toString())
     }
+
+
+
 }

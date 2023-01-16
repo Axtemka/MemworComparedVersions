@@ -15,7 +15,6 @@ class ForRamilActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_for_ramil)
-        dbManager.dataBaseInit()
         val addButton: Button = findViewById(R.id.addBtn)
         addButton.setOnClickListener {
             addDBCommunity()

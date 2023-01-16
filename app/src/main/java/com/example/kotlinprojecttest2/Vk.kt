@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.util.Log
 
 import android.widget.Button
 import android.widget.EditText
@@ -19,8 +20,7 @@ import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import okhttp3.internal.platform.Platform
-import java.util.*
+import kotlin.collections.ArrayList
 
 
 class Vk : Fragment() {
@@ -31,52 +31,70 @@ class Vk : Fragment() {
     var dialog: Dialog? = null
     val API_KEY = "cdceae99421e44e1ab1d238e284c07ac"
     var mActivity: Activity? = this.activity
-    lateinit var articles: ResponseViewer
+    private var articles = ResponseViewer()
+
+    var vkPosts: MutableList<Post> = ArrayList()
+    var vkDomains: MutableList<Domain> = ArrayList()
+
     lateinit var adapter: Adapter
-    private var vkResList: MutableList<MutableList<String>> = ArrayList()
+
     lateinit var mContext: Context
-    private val platform: String = "vk"
-//>>>>>>> refs/remotes/origin/compared
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        return inflater.inflate(R.layout.fragment_vk, container, false)
-        articles = ResponseViewer(platform)
+        //return inflater.inflate(R.layout.fragment_vk, container, false)
+        MemworViewModel.vkPostsLiveData.observe(viewLifecycleOwner) {
+            vkPosts = it
+
+//            debug output
+//            vkPosts.forEach {
+//                Log.e("FROM VK FRAGMENT", it.text + " " + it.author + " " + it.category + " " + it.images.toString())
+//            }
+
+        }
+        MemworViewModel.vkDomainsLiveData.observe(viewLifecycleOwner) {
+            vkDomains = it
+            articles.vkConfigureRetrofit()
+        }
+
         mContext= requireContext()
         swipeRefreshLayout = view?.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerView)
-        vkResList = articles.getVKList()
 
-/*
+
+        articles.getVkInfo()
+        //articles.vkConfigureRetrofit()
+
         etQuery = view?.findViewById<EditText>(R.id.etQuery)
         btnSearch = view?.findViewById<Button>(R.id.btnSearch)
         dialog = mActivity?.let { Dialog(it) }
 
 
- */
-        recyclerView?.layoutManager = LinearLayoutManager(mActivity)
-        //val country = getCountry()
+            recyclerView?.layoutManager = LinearLayoutManager(mActivity)
+            //val country = getCountry()
 
-        //swipeRefreshLayout!!.setOnRefreshListener { retrieveJson("", country, API_KEY) }
+            //swipeRefreshLayout!!.setOnRefreshListener { retrieveJson("", country, API_KEY) }
 
+        //TODO (Нужно переписать адаптер под класс Post)
 
-        swipeRefreshLayout!!.setOnRefreshListener {
-            vkResList = articles.getVKList()
-            adapter = Adapter(mContext, vkResList)
-            swipeRefreshLayout?.isRefreshing = false
-        }
-
-
-
-        //retrieveJson("", country, API_KEY)
-        adapter = Adapter(mContext, vkResList)
-        recyclerView?.adapter = adapter
-
-        btnSearch?.setOnClickListener {
-
-        }
+//        if (vkPosts.isNotEmpty() && !MemworViewModel.vkPostsLiveData.isEmpty()){
+//            swipeRefreshLayout?.setOnRefreshListener {
+//                Log.e("SIZE", vkPosts.toString())
+//                Log.e("SIZE", vkPosts.size.toString())
+//                adapter = Adapter(mContext, vkPosts)
+//                swipeRefreshLayout?.isRefreshing = false
+//            }
+//
+//            //retrieveJson("", country, API_KEY)
+//            adapter = Adapter(mContext, vkPosts)
+//            recyclerView?.adapter = adapter
+//            return inflater.inflate(R.layout.fragment_vk, container, false)
+//        }
+        //Какая-нибудь заглушка
         return inflater.inflate(R.layout.fragment_vk, container, false)
 
     }

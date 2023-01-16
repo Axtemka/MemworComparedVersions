@@ -1,9 +1,13 @@
 package com.example.kotlinprojecttest2
 
+import android.app.Application
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -16,16 +20,27 @@ import com.example.kotlinprojecttest2.databinding.ActivityMainBinding
 import com.example.kotlinprojecttest2.db.MemworDatabaseManager
 //=======
 import android.widget.Button
+import androidx.core.os.HandlerCompat.postDelayed
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 //>>>>>>> refs/remotes/origin/compared
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope.coroutineContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newCoroutineContext
+import kotlin.coroutines.CoroutineContext
 
 
 class MainActivity : AppCompatActivity() {
-    public var domainsList: MutableList<String?> = ArrayList()
-    var resp: MutableList<MutableList<String>> = ArrayList()
+    //val VkListLiveData = MutableLiveData<MutableList<MutableList<MutableList<String>>>>()
+    val VkListLiveData = PostLiveData()
+
     // This will be connected with fragListTitles || platformName - Vk (test platform)
-    val viewer = ResponseViewer("vk")
+    private val viewer = ResponseViewer()
     private val dbManager = MemworDatabaseManager()
+
 
 //=======
     var dialog: Dialog? = null
@@ -46,19 +61,14 @@ class MainActivity : AppCompatActivity() {
     )
     private lateinit var binding: ActivityMainBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
 
-
-
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
 
-
-        //dataBaseCheck()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         btnAboutUs = findViewById<Button>(R.id.aboutUs)
-//>>>>>>> refs/remotes/origin/compared
         val adapter = VpAdapter(this, fragList)
         binding.vp2.adapter = adapter
         TabLayoutMediator(binding.ourtablayout, binding.vp2){
@@ -66,10 +76,8 @@ class MainActivity : AppCompatActivity() {
         }.attach()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = ""
-
         dialog = Dialog(this)
         btnAboutUs!!.setOnClickListener { showDialog() }
-//>>>>>>> refs/remotes/origin/compared
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -102,33 +110,16 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    fun vkParseOnClick(view: View){
-        setContentView(R.layout.activity_main)
-        //TODO(Different platform`s parsing from platform names (Reddit, Telegram))
-        //viewer.returnUrls()
-
-
-    }
     fun showDialog() {
         val btnClose: Button
         dialog?.setContentView(R.layout.about_us_pop_up)
         dialog!!.show()
         btnClose = dialog!!.findViewById(R.id.close_)
         btnClose.setOnClickListener { dialog!!.dismiss() }
-//>>>>>>> refs/remotes/origin/compared
     }
-
-
-    fun dataBaseCheck(){
-        //dbManager.dataBaseInit()
-        //dbManager.addNewCommunity("vk", "test-domain", "test-name", "test-category")
-//        viewer.returnUrls()
-//
-//        resp = viewer.getVKList()
-
-        //domainsList = dbManager.getDomains()
-    }
-
 }
+
+
+
 
 
